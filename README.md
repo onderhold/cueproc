@@ -3,15 +3,18 @@
                                                                       
 
 
-a) Preamble
-======================================================================
+###### a) Preamble
+
+---
+
 onderhold: After modifying this utility in 2010 and 2012, I will now 
 again update it to make it run with current versions of Python and Windows.
 (original README.MD in README.Nyaochi.md)
 
 
-1. Introduction
-======================================================================
+# 1. Introduction
+
+---
 Cuesheet Processor (CueProc) is a command-line tool for converting
 audio CD images into another format such as WAV, MP3, Ogg Vorbis, MP4,
 MPC, WMA, etc. The functions of this tool can be summarized as follows:
@@ -38,15 +41,19 @@ CueProc is distributed under GNU General Public Lisence (GPL).
 
 
 
-2. Usage
-======================================================================
+# 2. Usage
+
+---
+
 Please refer to the wayback web site capture (copied to doc in this repo)
 as for the tutorial
 
 
 
-3. Acknowledgement
-======================================================================
+# 3. Acknowledgement
+
+---
+
 This software uses the following libraries:
 - libsndfile
     available at: https://libsndfile.github.io/libsndfile/

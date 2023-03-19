@@ -3,7 +3,7 @@
 """
     Cuesheet parser.
 
-    Copyright (c) 2006-2008 by Nyaochi
+    Copyright (c) 2006-2008 by Nyaochi, 2010 by onderhold
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA, or visit
 http://www.gnu.org/copyleft/gpl.html .
 """
+
+from __future__ import print_function
 
 import string, sys, os
 
@@ -192,19 +194,19 @@ def to_playlist(cs, pregap = False, delgap = False):
                 else:
                     track.end = cs[i+1].indexes[1]
         # Assign title
-        track['TITLE'] = __let(cs[i].title, "")
-        track['ARTIST'] = __let(cs[i].performer, cs[0].performer)
-        track['ALBUMARTIST'] = cs[0].performer
-        track['ALBUM'] = cs[0].title
-        track['GENRE'] = __let(cs[i].rem.get("GENRE"), cs[0].rem.get("GENRE"))
-        track['tracknumber'] = i
-        track['TRACKNUMBER'] = '%02d' % i
-        track['totaltracks'] = len(cs)-1
-        track['TOTALTRACKS'] = '%02d' % (len(cs)-1)
-        track['DATE'] = __let(cs[i].rem.get("DATE"), cs[0].rem.get("DATE"))
-        track['ISRC'] = __let(cs[i].isrc, cs[0].isrc)
-        track['CATALOG'] = __let(cs[i].catalog, cs[0].catalog)
-        track['COMMENT'] = __let(cs[i].rem.get("COMMENT"), cs[0].rem.get("COMMENT"))
+        track[unicode('TITLE','utf-8')] = __let(cs[i].title, "")
+        track[unicode('ARTIST','utf-8')] = __let(cs[i].performer, cs[0].performer)
+        track[unicode('ALBUMARTIST','utf-8')] = cs[0].performer
+        track[unicode('ALBUM','utf-8')] = cs[0].title
+        track[unicode('GENRE','utf-8')] = __let(cs[i].rem.get("GENRE"), cs[0].rem.get("GENRE"))
+        track[unicode('tracknumber','utf-8')] = i
+        track[unicode('TRACKNUMBER','utf-8')] = '%02d' % i
+        track[unicode('totaltracks','utf-8')] = len(cs)-1
+        track[unicode('TOTALTRACKS','utf-8')] = '%02d' % (len(cs)-1)
+        track[unicode('DATE','utf-8')] = __let(cs[i].rem.get("DATE"), cs[0].rem.get("DATE"))
+        track[unicode('ISRC','utf-8')] = __let(cs[i].isrc, cs[0].isrc)
+        track[unicode('CATALOG','utf-8')] = __let(cs[i].catalog, cs[0].catalog)
+        track[unicode('COMMENT','utf-8')] = __let(cs[i].rem.get("COMMENT"), cs[0].rem.get("COMMENT"))
         # Obtain custom fields
         for key, value in cs[0].rem.iteritems():
             if key not in ("GENRE", "DATE", "COMMENT"):

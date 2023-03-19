@@ -3,7 +3,7 @@
 """
     Output Plugin for generic external encoders with piping.
 
-    Copyright (c) 2006-2008 by Nyaochi
+    Copyright (c) 2006-2008 by Nyaochi, 2010 by onderhold
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@ from celib import *
 
 class GenericEncoderPipingOutput(OutputModule):
     def __init__(self):
-        self.name = 'extpipe'
+        self.name = unicode('extpipe', 'utf-8')
         self.is_utf8 = False
         self.ext = ''
         self.cmd = ''
 
         self.doc = OutputModuleDocument()
         self.doc.tools = (
-            'Any external encoder receiving an audio source from STDIN.',
+            u'Any external encoder receiving an audio source from STDIN.',
             )
         self.doc.commands = None
         self.doc.limitations = None
@@ -41,12 +41,15 @@ class GenericEncoderPipingOutput(OutputModule):
     def handle_track(self, track, options):
         args = []
         args.append(track['input_cmdline'])
-        args.append('|')
+        args.append(u'|')
         args.append(track['output_cmdline'])
         cmdline = args_to_string(args)
+        # fo.write('cmdline=%s\n' % cmdline)
         self.console.execute(cmdline)
 
         i = 1
         while track.has_key('output_cmdline' + str(i)):
-            self.console.execute(track['output_cmdline' + str(i)])
+            cmdline = track['output_cmdline' + str(i)]
+            # fo.write('cmdline=%s\n' % cmdline)
+            self.console.execute(cmdline)
             i += 1

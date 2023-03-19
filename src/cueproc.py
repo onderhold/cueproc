@@ -4,7 +4,7 @@
 """
     CueProc main.
 
-    Copyright (c) 2006-2008 by Nyaochi
+    Copyright (c) 2006-2008 by Nyaochi, 2010 by onderhold
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,22 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA, or visit
 http://www.gnu.org/copyleft/gpl.html .
 
-This program requires Python 2.4 or later.
+This program requires Python 2.6 or later.
 """
 
-
-
-# Program version and author
-VERSION = '1.10'
-AUTHOR = 'Nyaochi'
-
-
+from __future__ import print_function
 
 import codecs
 import exceptions
 import fnmatch
+import locale
 import logging
-import optparse
 import os
 import sys
 import string
@@ -60,8 +54,6 @@ import ce_nero
 import ce_flac
 import ce_wavpack
 import ce_extpipe
-
-
 
 # Add audio input objects.
 input_class_factory = [
@@ -101,37 +93,37 @@ def set_track_attributes(track, target, options, is_embedded):
             track.filename = os.path.join(os.path.dirname(target), track.filename)
 
     track.url = os.path.abspath(track.filename)
+    # fo.write('track.url=%s, %s\n' % (type(track.url), track.url))
+    track[unicode('audio','utf-8')] = track.filename
+    track[unicode('audio_path','utf-8')] = os.path.dirname(track.filename)
+    track[unicode('audio_path_drive','utf-8')] = os.path.splitdrive(track['audio_path'])[0]
+    track[unicode('audio_path_dir','utf-8')] = os.path.splitdrive(track['audio_path'])[1]
+    track[unicode('audio_base','utf-8')] = os.path.basename(track.filename)
+    track[unicode('audio_file','utf-8')] = os.path.splitext(track['audio_base'])[0]
+    track[unicode('audio_ext','utf-8')] = os.path.splitext(track['audio_base'])[1]
+    track[unicode('audio_absolute','utf-8')] = track.url
+    track[unicode('audio_absolute_path','utf-8')] = os.path.dirname(track['audio_absolute'])
+    track[unicode('audio_absolute_path_drive','utf-8')] = os.path.splitdrive(os.path.dirname(track['audio_absolute_path']))[0]
+    track[unicode('audio_absolute_path_dir','utf-8')] = os.path.splitdrive(os.path.dirname(track['audio_absolute_path']))[1]
+    track[unicode('cuesheet','utf-8')] = target
+    track[unicode('cuesheet_path','utf-8')] = os.path.dirname(target)
+    track[unicode('cuesheet_path_drive','utf-8')] = os.path.splitdrive(track['cuesheet_path'])[0]
+    track[unicode('cuesheet_path_dir','utf-8')] = os.path.splitdrive(track['cuesheet_path'])[1]
+    track[unicode('cuesheet_base','utf-8')] = os.path.basename(target)
+    track[unicode('cuesheet_file','utf-8')] = os.path.splitext(track['cuesheet_base'])[0]
+    track[unicode('cuesheet_ext','utf-8')] = os.path.splitext(track['cuesheet_base'])[1]
+    track[unicode('cuesheet_absolute','utf-8')] = os.path.abspath(target)
+    track[unicode('cuesheet_absolute_path','utf-8')] = os.path.dirname(track['cuesheet_absolute'])
+    track[unicode('cuesheet_absolute_path_drive','utf-8')] = os.path.splitdrive(os.path.dirname(track['cuesheet_absolute_path']))[0]
+    track[unicode('cuesheet_absolute_path_dir','utf-8')] = os.path.splitdrive(os.path.dirname(track['cuesheet_absolute_path']))[1]
+    track[unicode('audio_range_begin','utf-8')] = track.begin
+    track[unicode('audio_range_end','utf-8')] = track.end
+    track[unicode('cuesheet_embedded','utf-8')] = is_embedded
 
-    track['audio'] = track.filename
-    track['audio_path'] = os.path.dirname(track.filename)
-    track['audio_path_drive'] = os.path.splitdrive(track['audio_path'])[0]
-    track['audio_path_dir'] = os.path.splitdrive(track['audio_path'])[1]
-    track['audio_base'] = os.path.basename(track.filename)
-    track['audio_file'] = os.path.splitext(track['audio_base'])[0]
-    track['audio_ext'] = os.path.splitext(track['audio_base'])[1]
-    track['audio_absolute'] = track.url
-    track['audio_absolute_path'] = os.path.dirname(track['audio_absolute'])
-    track['audio_absolute_path_drive'] = os.path.splitdrive(os.path.dirname(track['audio_absolute_path']))[0]
-    track['audio_absolute_path_dir'] = os.path.splitdrive(os.path.dirname(track['audio_absolute_path']))[1]
-    track['cuesheet'] = target
-    track['cuesheet_path'] = os.path.dirname(target)
-    track['cuesheet_path_drive'] = os.path.splitdrive(track['cuesheet_path'])[0]
-    track['cuesheet_path_dir'] = os.path.splitdrive(track['cuesheet_path'])[1]
-    track['cuesheet_base'] = os.path.basename(target)
-    track['cuesheet_file'] = os.path.splitext(track['cuesheet_base'])[0]
-    track['cuesheet_ext'] = os.path.splitext(track['cuesheet_base'])[1]
-    track['cuesheet_absolute'] = os.path.abspath(target)
-    track['cuesheet_absolute_path'] = os.path.dirname(track['cuesheet_absolute'])
-    track['cuesheet_absolute_path_drive'] = os.path.splitdrive(os.path.dirname(track['cuesheet_absolute_path']))[0]
-    track['cuesheet_absolute_path_dir'] = os.path.splitdrive(os.path.dirname(track['cuesheet_absolute_path']))[1]
-    track['audio_range_begin'] = track.begin
-    track['audio_range_end'] = track.end
-    track['cuesheet_embedded'] = is_embedded
+    track[unicode('output_plugin','utf-8')] = options.codec
+    track[unicode('output_command','utf-8')] = options.encodercmd
 
-    track['output_plugin'] = options.codec
-    track['output_command'] = options.encodercmd
-
-    track['quot'] = '"'
+    track[unicode('quot','utf-8')] = unicode('"','utf-8')
 
 def set_compilation_flag(tracks):
     # Collect artist names in the tracks
@@ -144,7 +136,7 @@ def set_compilation_flag(tracks):
     
     for track in tracks:
         if not track.has_key('COMPILATION'):
-            track['COMPILATION'] = compilation
+            track[unicode('COMPILATION', 'utf-8')] = compilation
 
 def set_albumart(track, options):
     if not track.get('ALBUMART'):
@@ -157,7 +149,7 @@ def set_albumart(track, options):
             name = evaluate_expression(image, track, globals(), locals())
             fn = os.path.join(track['cuesheet_path'], name)
             if os.path.exists(fn):
-                track['ALBUMART'] = fn
+                track[unicode('ALBUMART', 'utf-8')] = fn
                 break
 
 def copy_albumart(track, options):
@@ -169,20 +161,29 @@ def copy_albumart(track, options):
             shutil.copy2(src, dst)
 
 def open_text(target, charset):
+    """Open a file that contains file names of cuesheets.
+
+    Applies the correct decoding when the file contains a BOM, otherwise it uses
+    the charset parameter for decoding.
+    """
     boms = (
         (codecs.BOM_UTF8, 'utf8'),
         (codecs.BOM_UTF16, 'utf16'),
         (codecs.BOM_UTF32, 'utf32'),
         )
-    
-    f = open(target, 'rb')
+    # fo.write('%s\n' % repr(target.encode(options.syscharset)))    
+    # f = open(target.encode(options.syscharset), mode='rb')
+    # f = open(target.encode(fs_encoding), mode='rb')
+    f = open(target, mode='rb')
     test = f.read(4)
     for bom, cs in boms:
         if test.startswith(bom):
-            fi = codecs.open(target, 'r', cs)
+            fi = codecs.open(target.encode(options.syscharset), mode='r', encoding=cs)
             fi.read(len(bom))
             return fi
-    return codecs.open(target, 'r', charset)
+    # fi = codecs.open(target.encode(options.syscharset), mode='r', encoding=charset)
+    fi = codecs.open(target, mode='r', encoding=charset)
+    return fi
 
 def open_target(target, options):
     """Open a target cuesheet.
@@ -214,15 +215,16 @@ def open_target(target, options):
 
     # Initialize track attributes.
     for track in tracks:
+        # fo.write('target %s %s\n' % (type(target), target))
         set_track_attributes(track, target, options, is_embedded)
 
     return tracks
 
 def warn(msg):
-    print >>sys.stderr, 'WARNING:', msg
+    fe.write(u'WARNING: %s\n' % msg)
 
 def error(msg):
-    print >>sys.stderr, 'ERROR:', msg
+    fe.write(u'ERROR: %s\n' % msg)
 
 def list_codec(fo, options):
     """List the names of all supported codecs.
@@ -230,7 +232,7 @@ def list_codec(fo, options):
 
     fo.write('Supported codecs:\n')
     for outobj in output_class_factory:
-        fo.write('  %s\n' % outobj.name)
+        fo.write(u'  %s\n' % outobj.name)
 
 def show_help_codec(fo, name):
     """Show information about the output codec.
@@ -239,28 +241,28 @@ def show_help_codec(fo, name):
     # Find an output object with the specified name.
     outobj = find_object_by_name(output_class_factory, name)
     if not outobj:
-        warn("No suitable output codec found for '%s'" % name)
+        warn(u"No suitable output codec found for '%s'" % name)
 
     if outobj.doc.tools:
-        fo.write('Tool:\n')
+        fo.write(u'Tool:\n')
         for tool in outobj.doc.tools:
-            fo.write('  %s\n' % tool)
+            fo.write(u'  %s\n' % tool)
     if outobj.doc.commands:
-        fo.write('Dependencies:\n')
+        fo.write(u'Dependencies:\n')
         for command in outobj.doc.commands:
             fo.write('  %s\n' % command)
     if outobj.doc.limitations:
-        fo.write('Limitations:\n')
+        fo.write(u'Limitations:\n')
         for limitation in outobj.doc.limitations:
             fo.write('  %s\n' % limitation)
     if outobj.doc.tags:
-        fo.write('Supported fields:\n')
+        fo.write(u'Supported fields:\n')
         l = list(outobj.doc.tags)
         l.sort(lambda x, y: cmp(x, y))
         for tag in l:
             fo.write('  %s\n' % tag)
 
-    fo.write('Default extension: %s\n' % outobj.ext)
+    fo.write(u'Default extension: %s\n' % outobj.ext)
 
 def show_help_all_codecs(fo, options):
     """Show information about all output codec.
@@ -271,28 +273,52 @@ def show_help_all_codecs(fo, options):
         show_help_codec(fo, outobj.name)
         fo.write('\n')
 
-def show_variables(fo, track):
+def show_variables(track):
     """Show values of all variables in the track.
     """
-
-    fo.write('Variables:\n')
+    fo.write(u'Variables:\n')
     l = track.items()
     l.sort(lambda x, y: cmp(x[0], y[0]))
+    # fo.write(u'l=%s %s\n' % (type(l), repr(l)))
+    
     for name, value in l:
-        line = u'  %s=%s' % (name, value)
+        line = unicode('  %s=%s', 'utf-8') % (name, value)
         fo.write(line)
         fo.write('\n')
 
+    if 1 == 2:        
+        fo.write(u'name=%s %s\n' % (type(name), repr(name)))
+        fo.write(u'value=%s %s\n' % (type(value), repr(value)))
+        # line = u'  %s=%s\n' % (name, value) 
+        # fo.write(line)
+        return
+        if isinstance(name, str):
+            line = unicode('  %s=' % name, 'utf-8')
+        else:
+            line = u'  %s=' % name
+        if isinstance(value, str):
+            line += u'%s' % unicode(value)
+        else:
+            line += u'%s' % value
+        fo.write(repr(line))
+        fo.write('\n')
+
 def find_callback((fo, encoding, pattern), dirname, names):
-    dirname = dirname.decode(encoding)
+    # dirname = dirname.decode(encoding)
     for name in names:
-        name = name.decode(encoding)
+        # name = name.decode(encoding)
         if fnmatch.fnmatch(name, pattern):
-            fo.write(os.path.join(dirname, name))
-            fo.write('\n')
+            # print(type(os.path.join(dirname, name)), repr(os.path.join(dirname, name)))
+            # print(u'\n')
+            print(os.path.join(dirname, name))
+            # sys.stdout.write(u''.join(os.path.join(dirname, name)).encode(sys.stdout.encoding))
+            # fo.write(u''.join(os.path.join(dirname, name)))
+            # fo.write(u'\n')
     
 def find(fo, options):
-    os.path.walk('', find_callback, (fo, options.syscharset, options.find))
+    directory = u''.join(os.path.dirname(options.find))
+    pattern = u''.join(os.path.basename(options.find))  
+    os.path.walk(directory, find_callback, (fo, options.syscharset, pattern))
 
 def get_track_range(strrange):
     track_list = []
@@ -303,9 +329,6 @@ def get_track_range(strrange):
     return track_list
 
 def process(options, target):
-    fo = sys.stdout
-    fe = sys.stderr
-
     # Find an output object with the specified name.
     outobj = find_object_by_name(output_class_factory, options.codec)
     if not outobj:
@@ -320,7 +343,7 @@ def process(options, target):
 
     # Bind console object
     console = Console()
-    console.syscharset = options.syscharset
+    console.syscharset = lp_encoding
     if options.rehearsal:
         console.executable = False
     if options.hide_cmdln:
@@ -353,14 +376,28 @@ def process(options, target):
         if options.auto_albumart:
             set_albumart(track, options)
 
+        # Set optional variables specified by options.setvars.
+        for setvar in options.setvars:
+            pos = setvar.find('=')
+            if pos >= 0:
+                name = setvar[:pos]
+                value = setvar[pos+1:]
+                track[name] = evaluate_expression(
+                    value, track, globals(), locals())
+                # print("track[", name, "]", track[name])
+            else:
+                warn('Skipping an optional variable, %s' % strvar)
+
         # Report the progress.
-        fo.write('CueProc: %s [%02d/%02d]\n' % (
+        # print(type(target), repr(target))
+        # fo.write('CueProc: %s \n' % target)
+        fo.write(unicode('CueProc: %s [%02d/%02d]\n', 'utf-8') % (
             target, track['tracknumber'], int(track['TOTALTRACKS'])))
 
         # Determine an input module suitable for this track.
         inobj = find_input_object(input_class_factory, track.url, options)
         if not inobj:
-            warn('No suitable input class found for track #%d, %s' % (
+            warn(u'No suitable input class found for track #%d, %s' % (
                 track['tracknumber'],
                 track.url)
                 )
@@ -378,45 +415,37 @@ def process(options, target):
         ofn = fstr(ofn).strip()
 
         # Set more variables of the current track
-        track['input_cmdline'] = incmdln
-        track['output'] = os.path.join(odir, ofn + outobj.ext)
-        track['output_ext'] = outobj.ext
-        track['output_path'] = odir
-        track['output_base'] = ofn
+        track[unicode('input_cmdline', 'utf-8')] = incmdln
+        track[unicode('output', 'utf-8')] = os.path.join(odir, ofn + outobj.ext)
+        track[unicode('output_ext', 'utf-8')] = outobj.ext
+        track[unicode('output_path', 'utf-8')] = odir
+        track[unicode('output_base', 'utf-8')] = ofn
 
         # Evaluate output_cmdln variable.
         if options.outputcmdln:
-            track['output_cmdline'] = evaluate_expression(
+            track[unicode('output_cmdline', 'utf-8')] = evaluate_expression(
                 options.outputcmdln[0], track, globals(), locals())
             for i in range(1, len(options.outputcmdln)):
-                track['output_cmdline' + str(i)] = evaluate_expression(
+                track[unicode('output_cmdline' + str(i), 'utf-8')] = evaluate_expression(
                     options.outputcmdln[i], track, globals(), locals())
 
         # Evaluate output_option variable.
-        track['output_option'] = ''
+        track[unicode('output_option', 'utf-8')] = unicode('', 'utf-8') 
         if options.encoderopt:
             opts = []
             for encoderopt in options.encoderopt:
                 opts.append(evaluate_expression(encoderopt, track, globals(), locals()))
-            track['output_option'] = ' '.join(opts)
-
-        # Set optional variables specified by options.setvars.
-        for setvar in options.setvars:
-            pos = setvar.find('=')
-            if pos >= 0:
-                name = setvar[:pos]
-                value = setvar[pos+1:]
-                track[name] = evaluate_expression(
-                    value, track, globals(), locals())
-            else:
-                warn('Skipping an optional variable, %s' % strvar)
+            track[unicode('output_option', 'utf-8')] = ' '.join(opts)
 
         # Show variables if specified.
         if options.show_variables:
-            show_variables(sys.stdout, track)
+            show_variables(track)
 
         # Check the existence of the output file.
-        print track['output']
+        # fo.write('\n')
+        # fo.write('%s %s' % (unicode('Track:', 'utf-8'), track['output'])) 
+        # fo.write('\n')
+        # fo.write('\n')
         if not options.overwrite and os.path.exists(track['output']):
             warn('Skipping existing file, %s' % track['output'])
             continue
@@ -442,204 +471,24 @@ def process(options, target):
     return True
 
 if __name__ == '__main__':
-    # Show copyright information.
-    sys.stderr.write('Cuesheet Processor (CueProc) Version %s Copyright (c) 2006-2008 by %s\n' % (VERSION, AUTHOR))
-    sys.stderr.write('\n')
-
     # For py2exe use only. sitecustomize.py and site.py are not available for py2exe, but we can call sys.setdefaultencoding directly.
     # Force to use UTF-8 encoding for internal string representations for the best compatibility (to avoid so-called 'dame-moji' problem in Shift_JIS encoding)
     if hasattr(sys, 'setdefaultencoding'):
-        sys.setdefaultencoding('utf8')
+       sys.setdefaultencoding('utf-8')
 
-    # Define a command-line option parser.
-    parser = optparse.OptionParser(
-        usage="%prog [options] <target> [<target2> ...]\n"
-        "Execute a job for each track in the target CD image(s).",
-        version="CueProc %s" % VERSION
-        )
-    parser.add_option(
-        "-c", "--output",
-        action="store", type="string", dest="codec",
-        metavar="PLUGIN",
-        help="Specify an output plugin for the target(s)."
-        )
-    parser.add_option(
-        "-x", "--outputcmd",
-        action="store", type="string", dest="encodercmd",
-        default='',
-        metavar="COMMAND",
-        help="Specify a command name for PLUGIN. "
-        "An output plugin uses its default command name without this option specified.",
-        )
-    parser.add_option(
-        "-p", "--outputopt",
-        action="append", type="string", dest="encoderopt",
-        default=None,
-        metavar="PATTERN",
-        help="Specify a template pattern to pass optional arguments to PLUGIN. "
-        "Variable expressions ${<variable-name>} will be replaced with the actual values for the track(s). "
-        "Conditional expressions such as #if{<condition>}, #elif{<condition>}, #else, #endif will be evaluated, where a condition <condition> is expressed by a Python code snippet.",
-        )
-    parser.add_option(
-        "-e", "--outputext",
-        action="store", type="string", dest="encoderext",
-        default='',
-        metavar="EXT",
-        help="Specify an extension for output files. "
-        "An output plugin uses its default extension without this option specified.",
-        )
-    parser.add_option(
-        "-o", "--outputfn",
-        action="store", type="string", dest="outputfn",
-        default='${TRACKNUMBER}_${TITLE}',
-        metavar="PATTERN",
-        help="Specify a template pattern for output filenames. "
-        "Although the specification of template pattern is the same as -p (--outputopt) option, any characters invalid for a filename will be replaced with spaces."
-        )
-    parser.add_option(
-        "-d", "--outputdir",
-        action="store", type="string", dest="outputdir",
-        default=".",
-        metavar="PATTERN",
-        help="Specify a template pattern for output directory names. "
-        "Although the specification of template pattern is the same as -p (--outputopt) option, any characters invalid for a directory name will be replaced with spaces."
-        )
-    parser.add_option(
-        "-m", "--outputcmdln",
-        action="append", type="string", dest="outputcmdln",
-        default=[],
-        metavar="PATTERN",
-        help="Specify a template pattern for 'extpipe' plugin. "
-        "The specification of template pattern is the same as -p (--outputopt) option. "
-        "The plugin can invoke multiple processes sequencially with this option specified multiple times."
-        )
-    parser.add_option(
-        "-s", "--setvar",
-        action="append", type="string", dest="setvars", metavar="NAME=VALUE",
-        default=[],
-        help="Define a user-defined track variable whose name is NAME and value is VALUE. "
-        "This option can also overwrite the value of an existing variable. "
-        "NAME must consist of alphanumeric and '_' letters. "
-        "VALUE will be evaluated as a pattern similarly to the -p (--outputopt) option."
-        )
-    parser.add_option(
-        "--no-auto-compilation",
-        action="store_false", dest="auto_compilation",
-        default=True,
-        help="By default, CueProc sets COMPILATION flag to true for all tracks in the target cuesheet with multiple distinct PERFORMER names. "
-        "This option disables the automatic process of activating compilation flag."
-        )
-    parser.add_option(
-        "--albumart-files",
-        action="store", dest="albumart_files",
-        default="cover.jpg,albumart.jpg,folder.jpg",
-        help="Specify the list of files for albumart images in comma-separated values. "
-        "CueProc sets ALBUMART variable if one of these file exists in the same directory as the cuesheet. "
-        " The default value of the list is, 'cover.jpg,albumart.jpg,folder.jpg'."
-        )
-    parser.add_option(
-        "--no-auto-albumart",
-        action="store_false", dest="auto_albumart",
-        default=True,
-        help="This option disables the automatic detection of albumart image based on the esistence of image files."
-        )
-    parser.add_option(
-        "--albumart-action",
-        action="store", dest="albumart_action",
-        choices=("embed", "copy", "both"),
-        default="embed",
-        help="This option specifies the action when albumart images are detected, embed to output files (embed), copy to output directories (copy), or both (both)."
-        )
-    parser.add_option(
-        "-t", "--track",
-        action="store", type="string", dest="track",
-        default=None,
-        help="Specify track range where the job is applicable in comma separated values (CSV)."
-        )
-    parser.add_option(
-        "--hidden-track1",
-        action="store_true", dest="hidden_track1",
-        default=False,
-        help="This option assumes the first track to begin at INDEX 00 (or PREGAP)."
-        )
-    parser.add_option(
-        "--target",
-        action="store", type="string", dest="targets",
-        default=None,
-        help="Specify a text file describing the list of target filenames. Useful for converting a number of CD images at a time with a list file generated by --find option."
-        )
-    parser.add_option(
-        "-W", "--syscharset",
-        action="store", type="string", dest="syscharset",
-        default="mbcs",
-        help="Specify a charset for the current operating system. The default value for this option is '%default'."
-        )
-    parser.add_option(
-        "-w", "--cscharset",
-        action="store", type="string", dest="cscharset",
-        default="mbcs",
-        help="Specify a charset for the target cuesheet(s). The default value for this option is '%default'."
-        )
-    parser.add_option(
-        "-f", "--overwrite",
-        action="store_true", dest="overwrite",
-        help="Force to overwrite existing output files. "
-        "The default behavior (not overwriting) is useful "
-        "to process tracks only in new CD images."
-        )
-    parser.add_option(
-        "--tempdir",
-        action="store", type="string", dest="tempdir",
-        default=None,
-        help="Specify a directory for temporary files to which some plugins create during the jobs."
-        )
-    parser.add_option(
-        "-n", "--rehearsal",
-        action="store_true", dest="rehearsal",
-        help="Do not execute the jobs but only shows command-lines to be invoked by this program. Useful for debugging a job without running it."
-        )
-    parser.add_option(
-        "--find",
-        action="store", type="string", dest="find", metavar="PATTERN",
-        default=None,
-        help="Find files under the current directory (including its sub directories) that match the specified pattern."
-        )
-    parser.add_option(
-        "--show-variables",
-        action="store_true", dest="show_variables",
-        help="Show values of the track variable for each track in the target(s). "
-        "This option provides useful information for debugging a job."
-        )
-    parser.add_option(
-        "-l", "--list-plugin",
-        action="store_true", dest="list_codec",
-        help="List names of installed plugins."
-        )
-    parser.add_option(
-        "--help-plugin",
-        action="store", dest="help_codec", metavar="PLUGIN",
-        help="Show documentation for the specified plugin."
-        )
-    parser.add_option(
-        "--help-all-plugins",
-        action="store_true", dest="help_all_codecs",
-        help="Show documentation for all installed plugins."
-        )
-    parser.add_option(
-        "--hide-cmdln",
-        action="store_true", dest="hide_cmdln",
-        help="Do not display command-lines invoked by this program."
-        )
+    # get sys.argv as unicode     
+    uargv = win32_argv('utf-8')
+    if uargv:
+        fs_encoding = 'utf-8'
+    else:
+        uargv = sys.argv
+        fs_encoding = sys.getfilesystemencoding()
+    sys.argv = [x.decode(fs_encoding) for x in uargv]
 
-    # Parse command-line arguments.
-    (options, args) = parser.parse_args()
-
+    (options, args) = parse_cmdline()
     # Wrap IO streams.
-    sys.stdout = codecs.getwriter(options.syscharset)(sys.stdout)
-    sys.stderr = codecs.getwriter(options.syscharset)(sys.stderr)
-    fo = sys.stdout
-    fe = sys.stderr
-
+    set_writer(options.syscharset)
+    
     # Run the jobs.
     if options.list_codec:
         list_codec(fo, options)
@@ -653,8 +502,11 @@ if __name__ == '__main__':
         # Determine targets.
         targets = []
         for arg in args:
-            targets.append(arg.decode(options.syscharset))
+            # targets must be a list of unicode strings 
+            targets.append(arg)
         if options.targets:
+            # options.syscharset ensures that targets will be a list of 
+            # unicode strings
             f = open_text(options.targets, options.syscharset)
             targets += map(string.strip, f.readlines())
 
@@ -662,6 +514,8 @@ if __name__ == '__main__':
             warn("No target specified. Use -h or --help to see the usage.")
             sys.exit(1)
 
-        # Execulte job(s)
+        # Execute job(s)
         for target in targets:
+            # target is a unicode string
+            # fo.write('target %s %s\n' % (type(target), repr(target)))
             process(options, target)
