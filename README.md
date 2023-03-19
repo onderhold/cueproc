@@ -1,3 +1,10 @@
+                    Cuesheet Processor (CueProc) 1.9                  
+                   Copyright (c) 2006-2007 by Nyaochi                 
+                                                                      
+
+======================================================================
+1. Introduction
+======================================================================
 Cuesheet Processor (CueProc) is a command-line tool for converting
 audio CD images into another format such as WAV, MP3, Ogg Vorbis, MP4,
 MPC, WMA, etc. The functions of this tool can be summarized as follows:
@@ -22,3 +29,35 @@ MPC, WMA, etc. The functions of this tool can be summarized as follows:
 
 CueProc is the successor tool to Audio CD Image Reader (ACDIR) and LAME
 with cuesheet input.
+
+CueProc is distributed under GNU General Public Lisence (GPL).
+
+
+
+======================================================================
+2. Usage
+======================================================================
+Please refer to the web site as fot the tutorial:
+http://nyaochi.sakura.ne.jp/xoops/modules/mysoftwares/tc_6.html
+
+
+
+======================================================================
+3. Acknowledgement
+======================================================================
+This software uses the following libraries:
+- libsndfile
+    available at: http://www.zip.com.au/~erikd/libsndfile/
+	see COPYING.libsndfile
+
+- Monkey's Audio
+    available at: http://www.monkeysaudio.com/
+	see COPYING.MonkeysAudio.html
+
+- Free Lossless Audio Codec (FLAC)
+	available at: http://flac.sourceforge.net/
+	see COPYING.FLAC
+
+- WavPack
+	available at: http://www.wavpack.com/
+	see COPYING.WavPack
