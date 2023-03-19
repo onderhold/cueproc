@@ -47,17 +47,13 @@ http://nyaochi.sakura.ne.jp/xoops/modules/mysoftwares/tc_6.html
 ======================================================================
 This software uses the following libraries:
 - libsndfile
-    available at: http://www.zip.com.au/~erikd/libsndfile/
-	see COPYING.libsndfile
+    available at: https://libsndfile.github.io/libsndfile/
 
 - Monkey's Audio
-    available at: http://www.monkeysaudio.com/
-	see COPYING.MonkeysAudio.html
+    available at: https://www.monkeysaudio.com/
 
 - Free Lossless Audio Codec (FLAC)
-	available at: http://flac.sourceforge.net/
-	see COPYING.FLAC
+	available at: https://xiph.org/flac/
 
 - WavPack
-	available at: http://www.wavpack.com/
-	see COPYING.WavPack
+	available at: https://www.wavpack.com/
