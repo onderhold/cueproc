@@ -1,13 +1,6 @@
-                    Cuesheet Processor (CueProc)                  
-                   Copyright (c) 2006-2007 by Nyaochi, 2023 by onderhold
+                    Cuesheet Processor (CueProc) 1.10                  
+                   Copyright (c) 2006-2007 by Nyaochi                 
                                                                       
-
-
-a) Preamble
-======================================================================
-onderhold: After modifying this utility in 2010 and 2012, I will now 
-again update it to make it run with current versions of Python and Windows.
-(original README.MD in README.Nyaochi.md)
 
 
 1. Introduction
@@ -34,14 +27,17 @@ MPC, WMA, etc. The functions of this tool can be summarized as follows:
 - Skip encoding when the corresponding output file exists, which is
   useful for converting new CD images only.
 
+CueProc is the successor tool to Audio CD Image Reader (ACDIR) and LAME
+with cuesheet input.
+
 CueProc is distributed under GNU General Public Lisence (GPL).
 
 
 
 2. Usage
 ======================================================================
-Please refer to the wayback web site capture (copied to doc in this repo)
-as for the tutorial
+Please refer to the web site as fot the tutorial:
+http://nyaochi.sakura.ne.jp/xoops/modules/mysoftwares/tc_6.html
 
 
 
