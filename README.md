@@ -1,8 +1,8 @@
-                    Cuesheet Processor (CueProc) 1.9                  
+                    Cuesheet Processor (CueProc) 1.10                  
                    Copyright (c) 2006-2007 by Nyaochi                 
                                                                       
 
-======================================================================
+
 1. Introduction
 ======================================================================
 Cuesheet Processor (CueProc) is a command-line tool for converting
@@ -34,7 +34,6 @@ CueProc is distributed under GNU General Public Lisence (GPL).
 
 
 
-======================================================================
 2. Usage
 ======================================================================
 Please refer to the web site as fot the tutorial:
@@ -42,7 +41,6 @@ http://nyaochi.sakura.ne.jp/xoops/modules/mysoftwares/tc_6.html
 
 
 
-======================================================================
 3. Acknowledgement
 ======================================================================
 This software uses the following libraries:

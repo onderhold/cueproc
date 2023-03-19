@@ -68,42 +68,42 @@ class Track(dict):
         self.begin = None
         self.end = None
 
-    def __split(line):
-        fields = []
-        field = ""
-        quote = False
-    
-        for i in range(0, len(line)):
-            c = line[i]
-            if c in string.whitespace:
-                if quote:
+def __split(line):
+    fields = []
+    field = ""
+    quote = False
+
+    for i in range(0, len(line)):
+        c = line[i]
+        if c in string.whitespace:
+            if quote:
+                field += c
+            elif field:
+                fields.append(field)
+                field = ""
+        elif c == '"':
+            if quote:
+                if i+1 < len(line) and line[i+1] == '"':
+                    i += 1
                     field += c
-                elif field:
-                    fields.append(field)
-                    field = ""
-            elif c == '"':
-                if quote:
-                    if i+1 < len(line) and line[i+1] == '"':
-                        i += 1
-                        field += c
-                    else:
-                        quote = False
-                elif not field:
-                    quote = True
                 else:
-                    field += c
+                    quote = False
+            elif not field:
+                quote = True
             else:
                 field += c
-        if field:
-            fields.append(field)
-    
-        return fields
-
-    def __let(x, y):
-        if x is None:
-            return y
         else:
-            return x
+            field += c
+    if field:
+        fields.append(field)
+
+    return fields
+
+def __let(x, y):
+    if x is None:
+        return y
+    else:
+        return x
     
 def read_cuesheet(fp):
     tracks = [CSTrack(),]

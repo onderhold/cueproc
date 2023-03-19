@@ -27,12 +27,12 @@ class GenericEncoderPipingOutput(OutputModule):
     def __init__(self):
         self.name = 'extpipe'
         self.is_utf8 = False
-        self.ext = u''
-        self.cmd = u''
+        self.ext = ''
+        self.cmd = ''
 
         self.doc = OutputModuleDocument()
         self.doc.tools = (
-            u'Any external encoder receiving an audio source from STDIN.',
+            'Any external encoder receiving an audio source from STDIN.',
             )
         self.doc.commands = None
         self.doc.limitations = None
@@ -41,12 +41,12 @@ class GenericEncoderPipingOutput(OutputModule):
     def handle_track(self, track, options):
         args = []
         args.append(track['input_cmdline'])
-        args.append(u'|')
+        args.append('|')
         args.append(track['output_cmdline'])
         cmdline = args_to_string(args)
         self.console.execute(cmdline)
 
         i = 1
-        while track.has_key(u'output_cmdline' + str(i)):
-            self.console.execute(track[u'output_cmdline' + str(i)])
+        while track.has_key('output_cmdline' + str(i)):
+            self.console.execute(track['output_cmdline' + str(i)])
             i += 1
